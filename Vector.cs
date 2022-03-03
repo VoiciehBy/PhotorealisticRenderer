@@ -3,17 +3,49 @@ namespace PhotorealisticRenderer
 {
     public class Vector
     {
-        public Point Start { get; set; }
-        public Point End { get; set; }
-        public Vector(Point start, Point end)
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Z { get; set; }
+        public Vector(double x = 0, double y = 0, double z = 0)
         {
-            Start = start;
-            End = end;
+            X = x;
+            Y = y;
+            Z = z;
         }
-        public double distance() => Math.Sqrt(Utility.pow2(End.X - Start.X) + Utility.pow2(End.Y - Start.Y) + Utility.pow2(End.Z - Start.Z));
-        public override string ToString()
+
+        public double distance() => Math.Sqrt(Utility.pow2(X) + Utility.pow2(Y) + Utility.pow2(Z));
+
+        public static Vector operator +(Vector v) => v;
+        public static Vector operator -(Vector v) => new Vector(-v.X, -v.Y, -v.Z);
+
+        public static Vector operator *(double a, Vector v) => new Vector(a * v.X, a * v.Y, a * v.Z);
+        public static Vector operator *(Vector v, double a) => a * v;
+        public static Vector operator /(Vector v, double a)
         {
-            return " = [" + Start.ToString() + End.ToString() + "]\n";
+            if (a == 0)
+                throw new DivideByZeroException();
+            else
+                return new Vector(a / v.X, a / v.Y, a / v.Z);
         }
+        public static Vector operator /(Vector v, Vector v1) {
+            if (Utility.isAnyNumberEqualsZero(v) || Utility.isAnyNumberEqualsZero(v1))
+                throw new DivideByZeroException();
+            else
+                return new Vector(v.X / v1.X, v.Y / v1.Y, v.Z / v1.Z);
+        }
+        public static Vector operator *(Vector v, Vector v1) => new Vector(v.X * v1.X, v.Y * v1.Y, v.Z * v1.Z);
+        public static Vector crossProductOf(Vector v, Vector v1) {
+            double x = (v.Y * v1.Z) - (v1.Y * v.Z);
+            double y = (v.X * v1.Z) - (v1.X * v.Z);
+            double z = (v.X * v1.Y) - (v1.X * v1.Y);
+            return new Vector(x, y, z); 
+        }
+        public static Vector x(Vector v, Vector v1) => v * v1;
+        public static double dotProductOf(Vector v, Vector v1) => (v.X * v1.X) + (v.Y * v1.Y) + (v.Z * v1.Z);
+        public static double o(Vector v, Vector v1) => (v.X * v1.X) + (v.Y * v1.Y) + (v.Z * v1.Z);
+        public static Vector operator +(Vector v, Vector v1) => new Vector(v.X + v1.X, v.Y + v1.Y, v.Z + v1.Z);
+        public static Vector operator -(Vector v, Vector v1) => new Vector(v.X - v1.X, v.Y - v1.Y, v.Z - v1.Z);
+
+        public override string ToString() => ("[" + X + "," + Y + "," + Z + "]");
     }
 }

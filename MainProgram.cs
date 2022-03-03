@@ -5,10 +5,10 @@ namespace PhotorealisticRenderer
     {
         public static void Main(string[] args)
         {
-            Point A = new Point(1, 2, 3);
-            Point B = new Point(4, 5, 6);
-            Vector AB = new Vector(A, B);
-            Console.WriteLine(nameof(AB) + AB + "distance of " + nameof(AB) + " is " + AB.distance());
+            Vector v = new Vector(1, 2, 3);
+            Vector v1 = new Vector(4, 5, 6);
+            Console.WriteLine(nameof(v) + " = "+ v + " distance of " + nameof(v) + " is " + v.distance());
+            Console.WriteLine(nameof(v1) + " = "+ v1 + " distance of " + nameof(v1) + " is " + v1.distance());
         }
     }
 }
