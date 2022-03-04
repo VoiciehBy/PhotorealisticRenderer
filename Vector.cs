@@ -27,20 +27,22 @@ namespace PhotorealisticRenderer
             else
                 return new Vector(a / v.X, a / v.Y, a / v.Z);
         }
-        public static Vector operator /(Vector v, Vector v1) {
+        public static Vector operator /(Vector v, Vector v1)
+        {
             if (Utility.isAnyNumberEqualsZero(v) || Utility.isAnyNumberEqualsZero(v1))
                 throw new DivideByZeroException();
             else
                 return new Vector(v.X / v1.X, v.Y / v1.Y, v.Z / v1.Z);
         }
         public static Vector operator *(Vector v, Vector v1) => new Vector(v.X * v1.X, v.Y * v1.Y, v.Z * v1.Z);
-        public static Vector crossProductOf(Vector v, Vector v1) {
+        public static Vector crossProductOf(Vector v, Vector v1)
+        {
             double x = (v.Y * v1.Z) - (v1.Y * v.Z);
             double y = (v.X * v1.Z) - (v1.X * v.Z);
             double z = (v.X * v1.Y) - (v1.X * v1.Y);
-            return new Vector(x, y, z); 
+            return new Vector(x, y, z);
         }
-        public static Vector x(Vector v, Vector v1) => v * v1;
+        public static Vector x(Vector v, Vector v1) => crossProductOf(v, v1);
         public static double dotProductOf(Vector v, Vector v1) => (v.X * v1.X) + (v.Y * v1.Y) + (v.Z * v1.Z);
         public static double o(Vector v, Vector v1) => (v.X * v1.X) + (v.Y * v1.Y) + (v.Z * v1.Z);
         public static Vector operator +(Vector v, Vector v1) => new Vector(v.X + v1.X, v.Y + v1.Y, v.Z + v1.Z);
