@@ -25,7 +25,8 @@ namespace PhotorealisticRenderer
             v.Y = v1.Y;
             v.Z = v1.Z;
         }
-        public double distance() => Math.Sqrt(Utility.pow2(X) + Utility.pow2(Y) + Utility.pow2(Z));
+        public double length() => Math.Sqrt(Utility.pow2(X) + Utility.pow2(Y) + Utility.pow2(Z));
+        public double lengthPow2() => Utility.pow2(length());
 
         public static Vector operator +(Vector v) => v;
         public static Vector operator -(Vector v) => new Vector(-v.X, -v.Y, -v.Z);
@@ -56,7 +57,7 @@ namespace PhotorealisticRenderer
         }
         public static Vector x(Vector v, Vector v1) => crossProductOf(v, v1);
         public static double dotProductOf(Vector v, Vector v1) => (v.X * v1.X) + (v.Y * v1.Y) + (v.Z * v1.Z);
-        public static double o(Vector v, Vector v1) => (v.X * v1.X) + (v.Y * v1.Y) + (v.Z * v1.Z);
+        public static double o(Vector v, Vector v1) => dotProductOf(v,v1);
         public static Vector operator +(Vector v, Vector v1) => new Vector(v.X + v1.X, v.Y + v1.Y, v.Z + v1.Z);
         public static Vector operator -(Vector v, Vector v1) => new Vector(v.X - v1.X, v.Y - v1.Y, v.Z - v1.Z);
         public override string ToString() => ("[" + X + ";" + Y + ";" + Z + "]");
