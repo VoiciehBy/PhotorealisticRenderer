@@ -13,6 +13,18 @@ namespace PhotorealisticRenderer
             Z = z;
         }
 
+        public Vector(Vector v)
+        {
+            X = v.X;
+            Y = v.Y;
+            Z = v.Z;
+        }
+        public static void assign(Vector v, Vector v1)
+        {
+            v.X = v1.X;
+            v.Y = v1.Y;
+            v.Z = v1.Z;
+        }
         public double distance() => Math.Sqrt(Utility.pow2(X) + Utility.pow2(Y) + Utility.pow2(Z));
 
         public static Vector operator +(Vector v) => v;
@@ -47,7 +59,6 @@ namespace PhotorealisticRenderer
         public static double o(Vector v, Vector v1) => (v.X * v1.X) + (v.Y * v1.Y) + (v.Z * v1.Z);
         public static Vector operator +(Vector v, Vector v1) => new Vector(v.X + v1.X, v.Y + v1.Y, v.Z + v1.Z);
         public static Vector operator -(Vector v, Vector v1) => new Vector(v.X - v1.X, v.Y - v1.Y, v.Z - v1.Z);
-
-        public override string ToString() => ("[" + X + "," + Y + "," + Z + "]");
+        public override string ToString() => ("[" + X + ";" + Y + ";" + Z + "]");
     }
 }
