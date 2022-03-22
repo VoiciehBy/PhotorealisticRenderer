@@ -1,3 +1,4 @@
+using PhotorealisticRenderer.Shapes;
 using System;
 namespace PhotorealisticRenderer
 {
@@ -5,18 +6,27 @@ namespace PhotorealisticRenderer
     {
         public static void Main(string[] args)
         {
-            Vector v = new Vector(1, 2, 3);
-            Vector v1 = new Vector(4, 5, 6);
-            Vector v2 = new Vector(v + v1);
-            Vector v3 = new Vector(v - v1);
-            v += v1;
-            v2 -= v1;
-            v1 *= v2;
-            v3 /= v1;
-            Console.WriteLine(nameof(v) + " = "+ v + " length of " + nameof(v) + " is " + v.length());
-            Console.WriteLine(nameof(v1) + " = "+ v1 + " length of " + nameof(v1) + " is " + v1.length());
-            Console.WriteLine(nameof(v2) + " = " + v2 + " length of " + nameof(v2) + " is " + v2.length());
-            Console.WriteLine(nameof(v3) + " = " + v3 + " length of " + nameof(v3) + " is " + v3.length());
+            Sphere sphere = new Sphere(new Vector(0, 0, 0), new Vector(0, 0, 0), 10);
+            Ray ray = new Ray(new Vector(0, 0, -20), new Vector(0, 0, 1));
+            Ray ray2 = new Ray(new Vector(0, 0, -20), new Vector(0, 1, 0));
+            Ray ray3 = new Ray(new Vector(0, 10, 0), new Vector(1, 0, 0));
+            Plane plane = new Plane(new Vector(0, 0, 0), new Vector(0, 0.5, 0.5));
+
+            double dist2; double dist1;
+            int one = sphere.CheckIntersection(ray, out dist1, out dist2);
+
+            double dist3; double dist4;
+            int two = sphere.CheckIntersection(ray2, out dist3, out dist4);
+
+            double dist5; double dist6;
+            int three = sphere.CheckIntersection(ray3, out dist5, out dist6);
+
+            double dist7;
+            bool four = plane.CheckIntersection(ray2, out dist7);
+
+            return;
         }
+
+
     }
 }

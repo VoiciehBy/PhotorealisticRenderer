@@ -61,5 +61,12 @@ namespace PhotorealisticRenderer
         public static Vector operator +(Vector v, Vector v1) => new Vector(v.X + v1.X, v.Y + v1.Y, v.Z + v1.Z);
         public static Vector operator -(Vector v, Vector v1) => new Vector(v.X - v1.X, v.Y - v1.Y, v.Z - v1.Z);
         public override string ToString() => ("[" + X + ";" + Y + ";" + Z + "]");
+
+        public Vector Normalize()
+        {
+            double added = Math.Sqrt(dotProductOf(this, this));
+            Vector normalized = new Vector(X / added, Y / added, Z / added);
+            return normalized;
+        }
     }
 }

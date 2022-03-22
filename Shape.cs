@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PhotorealisticRenderer.Shapes
+﻿namespace PhotorealisticRenderer.Shapes
 {
     public class Shape
     {
-        public Vector Root;
-        public Vector EulerRotation;
+        public Vector origin;
+        public Vector rotation;
+
+        public Shape(Vector root, Vector eulerRotation)
+        {
+            origin = root;
+            rotation = eulerRotation;
+        }
     }
 }
