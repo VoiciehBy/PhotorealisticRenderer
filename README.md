@@ -1,2 +1,2 @@
 # PhotorealisticRenderer
- Renderer being able to rener photorealistic graphics written in C#.
+ Renderer being able to render photorealistic graphics written in C#.
