@@ -57,7 +57,7 @@ namespace PhotorealisticRenderer
         }
         public static Vector x(Vector v, Vector v1) => crossProductOf(v, v1);
         public static double dotProductOf(Vector v, Vector v1) => (v.X * v1.X) + (v.Y * v1.Y) + (v.Z * v1.Z);
-        public static double o(Vector v, Vector v1) => dotProductOf(v,v1);
+        public static double o(Vector v, Vector v1) => dotProductOf(v, v1);
         public static Vector operator +(Vector v, Vector v1) => new Vector(v.X + v1.X, v.Y + v1.Y, v.Z + v1.Z);
         public static Vector operator -(Vector v, Vector v1) => new Vector(v.X - v1.X, v.Y - v1.Y, v.Z - v1.Z);
         public override string ToString() => ("[" + X + ";" + Y + ";" + Z + "]");
