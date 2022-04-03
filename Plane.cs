@@ -27,6 +27,10 @@ namespace PhotorealisticRenderer.Shapes
                     return true;
                 }
             }
+            else if (denom == 0)
+            {
+
+            }
             dist = -1;
             if (print) Console.WriteLine("No Intersection");
             return false;
