@@ -15,7 +15,6 @@ namespace PhotorealisticRenderer.Shapes
 
         public bool CheckIntersection(Ray ray, out double dist, bool print = true)
         {
-
             double denom = Vector.dotProductOf(direction, ray.direction);
             if (denom > 1e-6)
             {

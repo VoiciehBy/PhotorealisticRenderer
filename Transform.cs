@@ -8,6 +8,5 @@ namespace PhotorealisticRenderer.Core
 {
     public class Transform
     {
-
     }
 }

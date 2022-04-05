@@ -1,11 +1,12 @@
 ﻿namespace PhotorealisticRenderer.Shapes
 {
-    public class Shape
+    public abstract class Shape
     {
         public Vector origin;
         public Vector rotation;
+        public Intensity color;
 
-        public Shape(Vector root, Vector eulerRotation)
+        protected Shape(Vector root, Vector eulerRotation)
         {
             origin = root;
             rotation = eulerRotation;
