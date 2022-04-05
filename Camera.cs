@@ -33,8 +33,10 @@ namespace PhotorealisticRenderer
             set { nearPlane = value; }
         }
         private float farPlane;
-        public float FarPlane
+        
+        /*public float FarPlane
         {
         }
+        *///makes build fail
     }
 }
