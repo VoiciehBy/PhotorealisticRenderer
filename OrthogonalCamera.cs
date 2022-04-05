@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Threading.Tasks;
 
 namespace PhotorealisticRenderer;
 
@@ -23,12 +22,9 @@ public class OrthogonalCamera : Camera
         for (var y = 0; y < bitmap.Height; y++)
         {
             var pixelOffset = (Right * (-1.0f + (x + 0.5f) * pixelWidth)) + (Up * (1.0f - (y + 0.5f) * pixelHeight));
-            var ray = new Ray(Position + pixelOffset, Target - Position + pixelOffset);
 
-            var intensity = scene.GetClosestIntersection(ray, NearPlane, FarPlane);
-
-            if (intensity == null) bitmap.SetPixel(x, y, scene.BackgroundColor.AsColor());
-            else bitmap.SetPixel(x, y, intensity.AsColor());
+            var intensity = AntiAliasing.GetAntiAliasing(this, scene, Position + pixelOffset, Target - Position + pixelOffset, pixelWidth, pixelHeight) ?? scene.BackgroundColor; 
+            bitmap.SetPixel(x, y, intensity.AsColor());
         }
     }
 }

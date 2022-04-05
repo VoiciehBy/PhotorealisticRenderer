@@ -24,12 +24,9 @@ public class PerspectiveCamera : Camera
         {
             var pixelOffset = (Right * (-1.0f + (x + 0.5f) * pixelWidth)) + (Up * (1.0f - (y + 0.5f) * pixelHeight));
             // var pixelOffset = new Vector(-1.0f + (x + 0.5f) * pixelWidth, 1.0f - (y + 0.5f) * pixelHeight);
-            var ray = new Ray(Position, Target - Position + pixelOffset);
 
-            var intensity = scene.GetClosestIntersection(ray, NearPlane, FarPlane);
-
-            if (intensity == null) bitmap.SetPixel(x, y, scene.BackgroundColor.AsColor());
-            else bitmap.SetPixel(x, y, intensity.AsColor());
+            var intensity = AntiAliasing.GetAntiAliasing(this, scene, Position, Target - Position + pixelOffset, pixelWidth, pixelHeight) ?? scene.BackgroundColor; 
+            bitmap.SetPixel(x, y, intensity.AsColor());
         }
     }
 }

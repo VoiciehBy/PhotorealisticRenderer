@@ -3,7 +3,6 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Reflection.Metadata.Ecma335;
 
 namespace PhotorealisticRenderer
 {
@@ -17,8 +16,8 @@ namespace PhotorealisticRenderer
                 return;
             }
 
-            var sphere = new Sphere(new Vector(0, 0, 0), new Vector(), 0.1) { color = new Intensity(0, 0, 255) };
-            var secondSphere = new Sphere(new Vector(0.1, 0, 0), new Vector(), 0.07) { color = new Intensity(255, 0, 0) };
+            var sphere = new Sphere(new Vector(), new Vector(), 0.1) { color = new Intensity(0, 0, 255) };
+            var secondSphere = new Sphere(new Vector(0.1, 0, 0.1), new Vector(), 0.07) { color = new Intensity(255, 0, 0) };
             // Ray ray = new Ray(new Vector(0, 0, -20), new Vector(0, 0, 1));
             // Ray ray2 = new Ray(new Vector(0, 0, -20), new Vector(0, 0, 1));
             // Ray ray3 = new Ray(new Vector(0, 10, 0), new Vector(1, 0, 0));
@@ -39,16 +38,19 @@ namespace PhotorealisticRenderer
             var xsize = 1024;
             var ysize = 1024;
 
-            var perspective = new Bitmap(xsize, ysize, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            var orthogonal = new Bitmap(xsize, ysize, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var perspective = new Bitmap(xsize, ysize, PixelFormat.Format32bppArgb);
+            var orthogonal = new Bitmap(xsize, ysize, PixelFormat.Format32bppArgb);
+            var antiAliasing = new AntiAliasingGrid(5);
 
-            var scene = new Scene() { BackgroundColor = new Intensity(0, 255, 0) };
+            var scene = new Scene { BackgroundColor = new Intensity(0, 255, 0) };
             scene.Spheres.Add(sphere);
             scene.Spheres.Add(secondSphere);
             // scene.Planes.Add(plane);
 
             for (var i = 0; i < 4; i++)
             {
+                Console.WriteLine($"Creating image {i + 1}...");
+
                 var x = i switch
                 {
                     1 => 20,
@@ -61,31 +63,19 @@ namespace PhotorealisticRenderer
                     2 => 20,
                     _ => 0,
                 };
-                
+
                 var pos = new Vector(x, 0, z);
-                
-                var perspectiveCamera = new PerspectiveCamera(pos, new Vector());
+
+                var perspectiveCamera = new PerspectiveCamera(pos, new Vector()) { AntiAliasing = antiAliasing };
                 perspectiveCamera.DrawScene(scene, perspective);
 
-                var orthogonalCamera = new OrthogonalCamera(pos, new Vector());
+                var orthogonalCamera = new OrthogonalCamera(pos, new Vector()) { AntiAliasing = antiAliasing };
                 orthogonalCamera.DrawScene(scene, orthogonal);
 
                 Save(perspective, $"{nameof(perspective)}_{i}");
                 Save(orthogonal, $"{nameof(orthogonal)}_{i}");
             }
-
-            void setPixel(int x, int y, Intensity pixel)
-            {
-                int red, green, blue;
-                red = (int)(pixel.r * 255);
-                green = (int)(pixel.g * 255);
-                blue = (int)(pixel.b * 255);
-                orthogonal.SetPixel(x, y, Color.FromArgb(red, green, blue));
-            }
-
-            return;
         }
-
 
         public static void Save(Bitmap bitmap, string name)
         {
