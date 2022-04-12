@@ -5,46 +5,24 @@ namespace PhotorealisticRenderer
 {
     public class Scene
     {
-        public Intensity BackgroundColor { get; set; } = new(0, 0, 0);
-        public List<Sphere> Spheres { get; } = new();
-        public List<Plane> Planes { get; } = new();
+        public LightIntensity BackgroundColor = new(0, 0, 0);
+        public List<Shape> Shapes = new();
 
-        public Intensity GetClosestIntersection(in Ray ray, in float nearPlane, in float farPlane)
+        public Shape TraceRay(Ray ray)
         {
-            var currentDistance = farPlane + double.Epsilon;
-            Intensity currentIntensity = null;
+            Shape? shape = null;
+            double minimalDistance = double.MaxValue;
+            double lastDistance = 0;
 
-            foreach (var sphere in Spheres)
+            foreach (var obj in Shapes)
             {
-                if (sphere.color == null || sphere.CheckIntersection(ray, out var dist1, out var dist2, false) == 0)
-                    continue;
-
-                if (dist1 < currentDistance && dist1 <= farPlane && dist1 >= nearPlane)
+                if (obj.CheckIntersection(ray, ref lastDistance) && lastDistance < minimalDistance)
                 {
-                    currentDistance = dist1;
-                    currentIntensity = sphere.color;
-                }
-
-                if (dist2 < currentDistance && dist2 <= farPlane && dist2 >= nearPlane)
-                {
-                    currentDistance = dist2;
-                    currentIntensity = sphere.color;
+                    minimalDistance = lastDistance;
+                    shape = obj;
                 }
             }
-
-            foreach (var plane in Planes)
-            {
-                if (!plane.CheckIntersection(ray, out var dist, false))
-                    continue;
-
-                if (dist < currentDistance && dist <= farPlane && dist >= nearPlane)
-                {
-                    currentDistance = dist;
-                    // TODO: Assign currentIntensity
-                }
-            }
-            
-            return currentIntensity;
+            return shape;
         }
     }
 }

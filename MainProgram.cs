@@ -3,6 +3,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using PhotorealisticRenderer.ObjReader;
 
 namespace PhotorealisticRenderer
 {
@@ -16,38 +18,26 @@ namespace PhotorealisticRenderer
                 return;
             }
 
-            var sphere = new Sphere(new Vector(), new Vector(), 0.1) { color = new Intensity(0, 0, 255) };
-            var secondSphere = new Sphere(new Vector(0.1, 0, 0.1), new Vector(), 0.07) { color = new Intensity(255, 0, 0) };
-            // Ray ray = new Ray(new Vector(0, 0, -20), new Vector(0, 0, 1));
-            // Ray ray2 = new Ray(new Vector(0, 0, -20), new Vector(0, 0, 1));
-            // Ray ray3 = new Ray(new Vector(0, 10, 0), new Vector(1, 0, 0));
-            // Plane plane = new Plane(new Vector(0, 0, 0), new Vector(0, 0.5, 0.5));
-
-            // double dist2; double dist1;
-            // int one = sphere.CheckIntersection(ray, out dist1, out dist2);
-            //
-            // double dist3; double dist4;
-            // int two = sphere.CheckIntersection(ray2, out dist3, out dist4);
-            //
-            // double dist5; double dist6;
-            // int three = sphere.CheckIntersection(ray3, out dist5, out dist6);
-
-            // double dist7;
-            // bool four = plane.CheckIntersection(ray2, out dist7);
+            var sphere = new Sphere(new Vector3(0, 0, 0), 1) { Color = new LightIntensity(0, 0, 255) };
+            var secondSphere = new Sphere(new Vector3(1, 0, 1), 0.5) { Color = new LightIntensity(255, 0, 0) };
 
             var xsize = 1024;
             var ysize = 1024;
 
-            var perspective = new Bitmap(xsize, ysize, PixelFormat.Format32bppArgb);
-            var orthogonal = new Bitmap(xsize, ysize, PixelFormat.Format32bppArgb);
-            var antiAliasing = new AntiAliasingGrid(5);
+            var scene = new Scene { BackgroundColor = new LightIntensity(0, 255, 0) };
+            //scene.Shapes.Add(sphere);
+            //scene.Shapes.Add(secondSphere);
+            
+            var obj = ObjFile.Load(@"C:\png\sword.obj");
+            var rng = new Random();
+            foreach (var triangle in obj.GetTriangles())
+            {
+                triangle.Color = new LightIntensity(rng.NextDouble(), rng.NextDouble(), rng.NextDouble());
+                scene.Shapes.Add(triangle);
+            }
+            
 
-            var scene = new Scene { BackgroundColor = new Intensity(0, 255, 0) };
-            scene.Spheres.Add(sphere);
-            scene.Spheres.Add(secondSphere);
-            // scene.Planes.Add(plane);
-
-            for (var i = 0; i < 4; i++)
+            for (var i = 0; i < 1; i++)
             {
                 Console.WriteLine($"Creating image {i + 1}...");
 
@@ -64,16 +54,14 @@ namespace PhotorealisticRenderer
                     _ => 0,
                 };
 
-                var pos = new Vector(x, 0, z);
+                //Camera camera = new Orthogonal(new Vector3(0, 0, 0), 0, new Vector2(5, 5));
+                PerspectiveCamera perspectiveCam = new(new Vector3(x, 50, z), new Vector3(0, 0, 0), new Vector3(0, -1, 0), 2);
 
-                var perspectiveCamera = new PerspectiveCamera(pos, new Vector()) { AntiAliasing = antiAliasing };
-                perspectiveCamera.DrawScene(scene, perspective);
-
-                var orthogonalCamera = new OrthogonalCamera(pos, new Vector()) { AntiAliasing = antiAliasing };
-                orthogonalCamera.DrawScene(scene, orthogonal);
+                Bitmap perspective = perspectiveCam.Raytrace(scene, new Size(1024, 1024));
+                //Bitmap orthogonal = tracer.Raytrace(scene, camera, new Size(1024, 1024));
 
                 Save(perspective, $"{nameof(perspective)}_{i}");
-                Save(orthogonal, $"{nameof(orthogonal)}_{i}");
+                //Save(orthogonal, $"{nameof(orthogonal)}_{i}");
             }
         }
 

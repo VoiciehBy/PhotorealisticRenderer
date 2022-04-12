@@ -2,37 +2,25 @@
 
 namespace PhotorealisticRenderer.Shapes
 {
-    public class Plane
+    public class Plane : Shape
     {
-        Vector origin;
-        Vector direction;
-
-        public Plane(Vector origin, Vector direction)
+        Vector3 origin;
+        public Vector3 direction;
+        public Plane(Vector3 origin, Vector3 direction)
         {
             this.origin = origin;
             this.direction = direction;
         }
-
-        public bool CheckIntersection(Ray ray, out double dist, bool print = true)
+        public override bool CheckIntersection(Ray ray, ref double distance)
         {
-            double denom = Vector.dotProductOf(direction, ray.direction);
-            if (denom > 1e-6)
+            double t = (origin - ray.Origin).Dot(direction) / ray.Direction.Dot(direction);
+            if (t > 0.00001)
             {
-                Vector p0l0 = origin - ray.origin;
-                dist = Vector.dotProductOf(p0l0, direction) / denom;
-                if (dist >= 0)
-                {
-                    if (print) Console.WriteLine("One Intersection at " + (ray.origin + ray.direction.Normalize() * dist).ToString());
-                    return true;
-                }
+                distance = t;
+                return true;
             }
-            else if (denom == 0)
-            {
-
-            }
-            dist = -1;
-            if (print) Console.WriteLine("No Intersection");
             return false;
         }
+
     }
 }

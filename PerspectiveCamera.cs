@@ -1,32 +1,29 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using PhotorealisticRenderer;
 
-namespace PhotorealisticRenderer;
-
-public class PerspectiveCamera : Camera
-{
-    public PerspectiveCamera()
-    {}
-    
-    public PerspectiveCamera(Vector position, Vector target) : base(position, target)
-    {}
-    
-    public override void DrawScene(Scene scene, Bitmap bitmap)
+class PerspectiveCamera : Camera
+{    
+    Vector3 origin;
+    double distance;
+    Vector3 u;
+    Vector3 v;
+    Vector3 w;
+    public PerspectiveCamera(Vector3 origin, Vector3 lookAt, Vector3 up, double distance)
     {
-        if (bitmap == null)
-            return;
-        
-        var pixelWidth = 2.0f / bitmap.Width;
-        var pixelHeight = 2.0f / bitmap.Height;
+        this.origin = origin;
+        this.distance = distance;
+        w = origin - lookAt;
+        w = w.Normalized;
+        u = Vector3.Cross(up, w);
+        u = u.Normalized;
+        v = Vector3.Cross(w, u);
+    }
+    public override Ray GetRayTo(Vector2 relativeLocation)
+    {
+        return new Ray(origin, RayDirection(relativeLocation));
+    }
 
-        for (var x = 0; x < bitmap.Width; x++)
-        for (var y = 0; y < bitmap.Height; y++)
-        {
-            var pixelOffset = (Right * (-1.0f + (x + 0.5f) * pixelWidth)) + (Up * (1.0f - (y + 0.5f) * pixelHeight));
-            // var pixelOffset = new Vector(-1.0f + (x + 0.5f) * pixelWidth, 1.0f - (y + 0.5f) * pixelHeight);
-
-            var intensity = AntiAliasing.GetAntiAliasing(this, scene, Position, Target - Position + pixelOffset, pixelWidth, pixelHeight) ?? scene.BackgroundColor; 
-            bitmap.SetPixel(x, y, intensity.AsColor());
-        }
+    public Vector3 RayDirection(Vector2 vec)
+    {
+        return u * vec.X + v * vec.Y + w * -distance;
     }
 }

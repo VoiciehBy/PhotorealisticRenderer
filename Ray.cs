@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PhotorealisticRenderer
+﻿namespace PhotorealisticRenderer
 {
     public class Ray
     {
-        public Vector direction;
-        public Vector origin;
-
-        public Ray(Vector origin, Vector direction)
+        public Vector3 origin;
+        public Vector3 direction;
+        public Ray(Vector3 origin, Vector3 direction)
         {
-            this.direction = direction;
             this.origin = origin;
+            this.direction = direction.Normalized;
         }
+        public Vector3 Origin { get { return origin; } }
+        public Vector3 Direction { get { return direction; } }
     }
 }

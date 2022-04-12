@@ -1,72 +1,94 @@
 using System;
 namespace PhotorealisticRenderer
 {
-    public class Vector
+    public class Vector3
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Z { get; set; }
-        public Vector(double x = 0, double y = 0, double z = 0)
+        public double x;
+        public double y;
+        public double z;
+        public Vector3(double x, double y, double z)
         {
-            X = x;
-            Y = y;
-            Z = z;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+        public double X
+        { get { return x; } set { x = value; } }
+        public double Y
+        { get { return y; } set { y = value; } }
+        public double Z
+        { get { return z; } set { z = value; } }
+
+        public static Vector3 operator -(Vector3 vecA)
+        {
+            return new Vector3(-vecA.X, -vecA.Y, -vecA.Z);
         }
 
-        public Vector(Vector v)
+        public static Vector3 operator +(Vector3 vecA, Vector3 vecB)
         {
-            X = v.X;
-            Y = v.Y;
-            Z = v.Z;
+            return new Vector3(vecA.X + vecB.X, vecA.Y + vecB.Y, vecA.Z + vecB.Z);
         }
-        public static void assign(Vector v, Vector v1)
+        public static Vector3 operator -(Vector3 vecA, Vector3 vecB)
         {
-            v.X = v1.X;
-            v.Y = v1.Y;
-            v.Z = v1.Z;
+            return new Vector3(vecA.X - vecB.X, vecA.Y - vecB.Y, vecA.Z - vecB.Z);
         }
-        public double length() => Math.Sqrt(Utility.pow2(X) + Utility.pow2(Y) + Utility.pow2(Z));
-        public double lengthPow2() => Utility.pow2(length());
+        public static Vector3 operator +(Vector3 vecA, double val)
+        {
+            return new Vector3(vecA.X + val, vecA.Y + val, vecA.Z + val);
+        }
+        public static Vector3 operator *(Vector3 vec, double val)
+        {
+            return new Vector3(vec.X * val, vec.Y * val, vec.Z * val);
+        }
+        public static Vector3 operator /(Vector3 vec, double val)
+        {
+            return new Vector3(vec.X / val, vec.Y / val, vec.Z / val);
+        }
+        public double Dot(Vector3 vec)
+        {
+            return (this.X * vec.X + this.Y * vec.Y + this.Z * vec.Z);
+        }
+        public static Vector3 Cross(Vector3 vecA, Vector3 vecB)
+        {
+            return new Vector3(vecA.Y * vecB.Z - vecA.Z * vecB.Y,
+            vecA.Z * vecB.X - vecA.X * vecB.Z,
+            vecA.X * vecB.Y - vecA.Y * vecB.X);
+        }
+        public double Length
+        { get { return Math.Sqrt(X * X + Y * Y + Z * Z); } }
+        public double LengthSq
+        { get { return X * X + Y * Y + Z * Z; } }
+        public Vector3 Normalized
+        {
+            get
+            {
+                if (Length == 0) { return new Vector3(0, 0, 0); }
+                return this / Length;
+            }
+        }
+    }
 
-        public static Vector operator +(Vector v) => v;
-        public static Vector operator -(Vector v) => new Vector(-v.X, -v.Y, -v.Z);
+    public class Vector2
+    {
+        double x;
+        double y;
+        public Vector2(double x, double y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+        public double X
+        { get { return x; } set { x = value; } }
+        public double Y
+        { get { return y; } set { y = value; } }
 
-        public static Vector operator *(double a, Vector v) => new Vector(a * v.X, a * v.Y, a * v.Z);
-        public static Vector operator *(Vector v, double a) => a * v;
-        public static Vector operator /(Vector v, double a)
+        public static Vector2 operator *(Vector2 vec, double val)
         {
-            if (a == 0)
-                throw new DivideByZeroException();
-            else
-                return new Vector(a / v.X, a / v.Y, a / v.Z);
+            return new Vector2(vec.X * val, vec.Y * val);
         }
-        public static Vector operator /(Vector v, Vector v1)
+        public static Vector2 operator +(Vector2 vecA, Vector2 vecB)
         {
-            if (Utility.isAnyNumberEqualsZero(v) || Utility.isAnyNumberEqualsZero(v1))
-                throw new DivideByZeroException();
-            else
-                return new Vector(v.X / v1.X, v.Y / v1.Y, v.Z / v1.Z);
-        }
-        public static Vector operator *(Vector v, Vector v1) => new Vector(v.X * v1.X, v.Y * v1.Y, v.Z * v1.Z);
-        public static Vector crossProductOf(Vector v, Vector v1)
-        {
-            double x = (v.Y * v1.Z) - (v1.Y * v.Z);
-            double y = (v.X * v1.Z) - (v1.X * v.Z);
-            double z = (v.X * v1.Y) - (v1.X * v1.Y);
-            return new Vector(x, y, z);
-        }
-        public static Vector x(Vector v, Vector v1) => crossProductOf(v, v1);
-        public static double dotProductOf(Vector v, Vector v1) => (v.X * v1.X) + (v.Y * v1.Y) + (v.Z * v1.Z);
-        public static double o(Vector v, Vector v1) => dotProductOf(v, v1);
-        public static Vector operator +(Vector v, Vector v1) => new Vector(v.X + v1.X, v.Y + v1.Y, v.Z + v1.Z);
-        public static Vector operator -(Vector v, Vector v1) => new Vector(v.X - v1.X, v.Y - v1.Y, v.Z - v1.Z);
-        public override string ToString() => ("[" + X + ";" + Y + ";" + Z + "]");
-
-        public Vector Normalize()
-        {
-            double added = Math.Sqrt(dotProductOf(this, this));
-            Vector normalized = new Vector(X / added, Y / added, Z / added);
-            return normalized;
+            return new Vector2(vecA.X + vecB.X, vecA.Y + vecB.Y);
         }
     }
 }

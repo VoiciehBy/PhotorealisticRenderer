@@ -1,41 +1,39 @@
-﻿using System.Drawing;
-
-namespace PhotorealisticRenderer;
+﻿using PhotorealisticRenderer;
+using PhotorealisticRenderer.Shapes;
+using System.Drawing;
+using static PhotorealisticRenderer.Scene;
 
 public abstract class Camera
 {
-    // All the vectors will need custom code set up to recalculate the changes to the remaining ones if something changes
-    public Vector Position { get; }
-    public Vector Target { get; }
-    public Vector Forward { get; }
-    public Vector Up { get; }
-    public Vector Right { get; }
-    public float NearPlane { get; set; }
-    public float FarPlane { get; set; }
-    public AntiAliasing AntiAliasing { get; set; } = AntiAliasing.None;
-    // public float Fov { get; set; }
+    public abstract Ray GetRayTo(Vector2 relativeLocation);
 
-    protected Camera()
+    public Bitmap Raytrace(Scene scene, Size imageSize)
     {
-        Position = new Vector(0, 0, 0);
-        Target = new Vector(0, 0, 1);
-        Forward = new Vector(0, 0, 1);
-        NearPlane = 1;
-        FarPlane = 1000;
-        Up = new Vector(0, 1, 0);
-        Right = -Vector.crossProductOf(Forward, Up).Normalize();
+
+        Bitmap bmp = new Bitmap(imageSize.Width, imageSize.Height);
+        for (int y = 0; y < imageSize.Height; y++)
+        {
+            for (int x = 0; x < imageSize.Width; x++)
+            {
+                LightIntensity totalColor = LightIntensity.Black;
+                for (int i = 0; i < 1; i++)
+                {
+                    Vector2 pictureCoordinates = new Vector2(x / (double)imageSize.Width * 2 - 1, y / (double)imageSize.Height * 2 - 1);
+                    Ray ray = GetRayTo(pictureCoordinates);
+                    totalColor = ShadeRay(scene, ray);
+                }
+                bmp.SetPixel(x, y, Color.FromArgb((int)(totalColor.R), (int)(totalColor.G), (int)(totalColor.B)));
+
+            }
+        }
+        return bmp;
     }
 
-    protected Camera(Vector position, Vector target)
+    public static LightIntensity ShadeRay(Scene scene, Ray ray)
     {
-        Position = position;
-        Target = target;
-        Forward = (Target - Position).Normalize();
-        NearPlane = 1;
-        FarPlane = 1000;
-        Up = new Vector(0, 1, 0);
-        Right = -Vector.crossProductOf(Forward, Up).Normalize();
+        Shape hit = scene.TraceRay(ray);
+        if (hit == null) { return scene.BackgroundColor; }
+        LightIntensity finalColor = hit.Color * 255;
+        return finalColor;
     }
-
-    public abstract void DrawScene(Scene scene, Bitmap bitmap);
 }
