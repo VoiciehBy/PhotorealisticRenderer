@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace PhotorealisticRenderer
 {
@@ -13,8 +14,21 @@ namespace PhotorealisticRenderer
             this.G = G;
             this.B = B;
         }
+
+        public double MaxDiffBetween(LightIntensity other)
+        {
+            var diffR = Math.Abs(R - other.R);
+            var diffG = Math.Abs(G - other.G);
+            var diffB = Math.Abs(B - other.B);
+
+            return Math.Max(diffR, Math.Max(diffG, diffB));
+        }
+        
+        
         public static implicit operator LightIntensity(Color color)
         { return new LightIntensity(color.R / 255.0, color.G / 255.0, color.B / 255.0); }
+        public static implicit operator Color(LightIntensity intensity)
+        { return Color.FromArgb((int)(intensity.R * 255), (int)(intensity.G * 255), (int)(intensity.B * 255)); }
         public static LightIntensity operator +(LightIntensity intensity, LightIntensity col2)
         { return new LightIntensity(intensity.R + col2.R, intensity.G + col2.G, intensity.B + col2.B); }
         public static LightIntensity operator +(LightIntensity intensity, double val)

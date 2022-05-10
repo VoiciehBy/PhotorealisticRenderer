@@ -24,18 +24,18 @@ namespace PhotorealisticRenderer
             var xsize = 1024;
             var ysize = 1024;
 
-            var scene = new Scene { BackgroundColor = new LightIntensity(0, 255, 0) };
+            var scene = new Scene { BackgroundColor = new LightIntensity(0, 1, 0) };
             //scene.Shapes.Add(sphere);
             //scene.Shapes.Add(secondSphere);
-            
-            var obj = ObjFile.Load(@"C:\png\sword.obj");
+
+            var obj = ObjFile.Load(@"C:\png\box.obj");
             var rng = new Random();
             foreach (var triangle in obj.GetTriangles())
             {
                 triangle.Color = new LightIntensity(rng.NextDouble(), rng.NextDouble(), rng.NextDouble());
                 scene.Shapes.Add(triangle);
             }
-            
+
 
             for (var i = 0; i < 1; i++)
             {
