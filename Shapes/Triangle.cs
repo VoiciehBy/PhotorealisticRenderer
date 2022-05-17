@@ -7,33 +7,51 @@ public class Triangle : Shape
     public Vector3 A { get; private set; }
     public Vector3 B { get; private set; }
     public Vector3 C { get; private set; }
-    public Vector3 Normal;
+
+    public Vector3 NA { get; private set; }
+    public Vector3 NB { get; private set; }
+    public Vector3 NC { get; private set; }
+
     public Plane plane;
 
 
-    public Triangle(Vector3 A, Vector3 B, Vector3 C)
+    public Triangle(Vector3 a, Vector3 b, Vector3 c) => SetPosition(a, b, c);
+
+    public Triangle SetPosition(Vector3 a, Vector3 b, Vector3 c)
     {
-        this.A = A;
-        this.B = B;
-        this.C = C;
-        Vector3 normal = (Vector3.Cross(B - A, B - C)).Normalized;
-        plane = new Plane(A, normal);
+        A = a;
+        B = b;
+        C = c;
+        Vector3 normal = Vector3.Cross(b - a, b - c).Normalized;
+        plane = new Plane(a, normal);
+
+        return this;
     }
 
-    public override bool CheckIntersection(Ray ray, ref double distance) //Moller-Trumbone
+    public Triangle SetNormals(Vector3 na, Vector3 nb, Vector3 nc)
     {
-        if (!plane.CheckIntersection(ray, ref distance))
+        NA = na;
+        NB = nb;
+        NC = nc;
+
+        return this;
+    }
+
+    public override bool CheckIntersection(Ray ray, ref double distance, out Vector3 normal) //Moller-Trumbone
+    {
+        if (!plane.CheckIntersection(ray, ref distance, out normal))
         {
             return false;
         }
+
         double kEpsilon = 0.000001;
         Vector3 v0v1 = B - A;
         Vector3 v0v2 = C - A;
-        Normal = (Vector3.Cross(B - A, B - C)).Normalized;
+        var innerNormal = (Vector3.Cross(B - A, B - C)).Normalized;
         Vector3 h = Vector3.Cross(ray.Direction, v0v2);
         double a = v0v1.Dot(h);
-        double d = Normal.Dot(A);
-        double t = -(Normal.Dot(ray.Origin) + d) / Normal.Dot(ray.Direction);
+        double d = innerNormal.Dot(A);
+        double t = -(innerNormal.Dot(ray.Origin) + d) / innerNormal.Dot(ray.Direction);
         if (a <= kEpsilon) return false;
         if (Math.Abs((a)) <= kEpsilon) return false;
         double f = 1 / a;
@@ -44,7 +62,8 @@ public class Triangle : Shape
         double v = ray.Direction.Dot(qvec) * f;
         if (v <= 0 || u + v >= 1) return false;
         distance = t;
+        if (this is { NA: { }, NB: { }, NC: { } }) // Null check for NA/NB/NC
+            normal = (NA * (1 - u - v) + NB * u + NC * v).Normalized;
         return true;
     }
-
 }

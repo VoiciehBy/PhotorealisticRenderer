@@ -12,9 +12,9 @@ namespace PhotorealisticRenderer.Shapes
             this.Radius = radius;
         }
 
-        public override bool CheckIntersection(Ray ray, ref double minDistance)
+        public override bool CheckIntersection(Ray ray, ref double minDistance, out Vector3 normal)
         {
-            double t;
+            normal = default;
             Vector3 distance = ray.Origin - Origin;
             double a = ray.Direction.LengthSq;
             double b = (distance * 2).Dot(ray.Direction);
@@ -23,13 +23,14 @@ namespace PhotorealisticRenderer.Shapes
             if (disc < 0) { return false; }
             double discSq = Math.Sqrt(disc);
             double denom = 2 * a;
-            t = (-b - discSq) / denom;
+            double t = (-b - discSq) / denom;
             if (t < 0.0001)
             { t = (-b + discSq) / denom; }
             if (t < 0.0001)
             { return false; }
             Vector3 hitPoint = (ray.Origin + ray.Direction * t);
             minDistance = t;
+            normal = (hitPoint - Origin).Normalized;
 
             return true;
         }

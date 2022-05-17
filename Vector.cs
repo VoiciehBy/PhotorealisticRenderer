@@ -1,91 +1,68 @@
 using System;
+
 namespace PhotorealisticRenderer
 {
-    public class Vector3
+    public readonly record struct Vector3(double X, double Y, double Z)
     {
-        public double x;
-        public double y;
-        public double z;
-        public Vector3(double x, double y, double z)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-        public double X
-        { get { return x; } set { x = value; } }
-        public double Y
-        { get { return y; } set { y = value; } }
-        public double Z
-        { get { return z; } set { z = value; } }
+        public static Vector3 operator -(Vector3 vecA) => new(-vecA.X, -vecA.Y, -vecA.Z);
 
-        public static Vector3 operator -(Vector3 vecA)
+        public static Vector3 operator +(Vector3 vecA, Vector3 vecB) => new(vecA.X + vecB.X, vecA.Y + vecB.Y, vecA.Z + vecB.Z);
+        public static Vector3 operator -(Vector3 vecA, Vector3 vecB) => new(vecA.X - vecB.X, vecA.Y - vecB.Y, vecA.Z - vecB.Z);
+
+        public static Vector3 operator +(Vector3 vecA, double val) => new(vecA.X + val, vecA.Y + val, vecA.Z + val);
+        public static Vector3 operator +(double val, Vector3 vecA) => vecA + val;
+
+        public static Vector3 operator *(Vector3 vec, double val) => new(vec.X * val, vec.Y * val, vec.Z * val);
+        public static Vector3 operator *(double val, Vector3 vec) => vec * val;
+
+        public static Vector3 operator /(Vector3 vec, double val) => new(vec.X / val, vec.Y / val, vec.Z / val);
+
+        public static double Dot(Vector3 vecA, Vector3 vecB) => vecA.Dot(vecB);
+        public double Dot(Vector3 vec) => X * vec.X + Y * vec.Y + Z * vec.Z;
+
+        public static Vector3 Cross(Vector3 vecA, Vector3 vecB) => vecA.Cross(vecB);
+
+        public Vector3 Cross(Vector3 other)
         {
-            return new Vector3(-vecA.X, -vecA.Y, -vecA.Z);
+            return new Vector3(Y * other.Z - Z * other.Y,
+                Z * other.X - X * other.Z,
+                X * other.Y - Y * other.X);
         }
 
-        public static Vector3 operator +(Vector3 vecA, Vector3 vecB)
-        {
-            return new Vector3(vecA.X + vecB.X, vecA.Y + vecB.Y, vecA.Z + vecB.Z);
-        }
-        public static Vector3 operator -(Vector3 vecA, Vector3 vecB)
-        {
-            return new Vector3(vecA.X - vecB.X, vecA.Y - vecB.Y, vecA.Z - vecB.Z);
-        }
-        public static Vector3 operator +(Vector3 vecA, double val)
-        {
-            return new Vector3(vecA.X + val, vecA.Y + val, vecA.Z + val);
-        }
-        public static Vector3 operator *(Vector3 vec, double val)
-        {
-            return new Vector3(vec.X * val, vec.Y * val, vec.Z * val);
-        }
-        public static Vector3 operator /(Vector3 vec, double val)
-        {
-            return new Vector3(vec.X / val, vec.Y / val, vec.Z / val);
-        }
-        public double Dot(Vector3 vec)
-        {
-            return (this.X * vec.X + this.Y * vec.Y + this.Z * vec.Z);
-        }
-        public static Vector3 Cross(Vector3 vecA, Vector3 vecB)
-        {
-            return new Vector3(vecA.Y * vecB.Z - vecA.Z * vecB.Y,
-            vecA.Z * vecB.X - vecA.X * vecB.Z,
-            vecA.X * vecB.Y - vecA.Y * vecB.X);
-        }
-        public double Length
-        { get { return Math.Sqrt(X * X + Y * Y + Z * Z); } }
-        public double LengthSq
-        { get { return X * X + Y * Y + Z * Z; } }
+        public double Length => Math.Sqrt(X * X + Y * Y + Z * Z);
+        public double LengthSq => X * X + Y * Y + Z * Z;
+
         public Vector3 Normalized
         {
             get
             {
-                if (Length == 0) { return new Vector3(0, 0, 0); }
-                return this / Length;
+                var l = Length;
+                if (l <= 0.0001f)
+                {
+                    return Zero;
+                }
+
+                return this / l;
             }
         }
+
+        public Vector3 Reflect(Vector3 other) => Reflect(this, other);
+
+        public static Vector3 Reflect(Vector3 I, Vector3 N)
+        {
+            return I - 2 * Dot(I, N) * N;
+        }
+
+        public static readonly Vector3 Zero = new(0, 0, 0);
     }
 
-    public class Vector2
+    public readonly record struct Vector2(double X, double Y)
     {
-        double x;
-        double y;
-        public Vector2(double x, double y)
-        {
-            this.x = x;
-            this.y = y;
-        }
-        public double X
-        { get { return x; } set { x = value; } }
-        public double Y
-        { get { return y; } set { y = value; } }
-
         public static Vector2 operator *(Vector2 vec, double val)
         {
             return new Vector2(vec.X * val, vec.Y * val);
         }
+
         public static Vector2 operator +(Vector2 vecA, Vector2 vecB)
         {
             return new Vector2(vecA.X + vecB.X, vecA.Y + vecB.Y);

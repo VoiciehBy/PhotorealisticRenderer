@@ -1,7 +1,4 @@
-﻿using System;
-using System.Xml.Schema;
-
-namespace PhotorealisticRenderer;
+﻿namespace PhotorealisticRenderer;
 
 public class AntiAliasing
 {
@@ -12,7 +9,7 @@ public class AntiAliasing
     {
         int total = 0;
         PixelRect center = new PixelRect(camera, scene, x, y, halfPixelWidth, halfPixelHeight, ref total, MaxSamples, Tolerance);
-        return center.GetIntensity(null);
+        return center.GetIntensity(default);
     }
 
     private class PixelPoint
@@ -24,7 +21,7 @@ public class AntiAliasing
         {
             CenterPoint = new Vector2(x, y);
             Ray ray = camera.GetRayTo(new Vector2(x, y));
-            Center = Camera.ShadeRay(scene, ray);
+            Center = camera.ShadeRay(scene, ray);
         }
 
         public virtual LightIntensity GetIntensity(LightIntensity parent)
@@ -57,11 +54,6 @@ public class AntiAliasing
                 TopLeft = topLeft;
                 return;
             }
-
-            PixelPoint top = null;
-            PixelPoint right = null;
-            PixelPoint bottom = null;
-            PixelPoint left = null;
 
             double innerHalfWidth = halfWidth / 2;
             double innerHalfHeight = halfHeight / 2;

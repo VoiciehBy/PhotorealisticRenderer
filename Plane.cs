@@ -11,14 +11,17 @@ namespace PhotorealisticRenderer.Shapes
             this.origin = origin;
             this.direction = direction;
         }
-        public override bool CheckIntersection(Ray ray, ref double distance)
+        public override bool CheckIntersection(Ray ray, ref double distance, out Vector3 normal)
         {
             double t = (origin - ray.Origin).Dot(direction) / ray.Direction.Dot(direction);
             if (t > 0.00001)
             {
                 distance = t;
+                normal = direction;
                 return true;
             }
+
+            normal = default;
             return false;
         }
 

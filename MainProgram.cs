@@ -3,14 +3,12 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using PhotorealisticRenderer.ObjReader;
 
 namespace PhotorealisticRenderer
 {
     public class MainProgram
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
             if (!OperatingSystem.IsWindows())
             {
@@ -18,55 +16,41 @@ namespace PhotorealisticRenderer
                 return;
             }
 
-            var sphere = new Sphere(new Vector3(0, 0, 0), 1) { Color = new LightIntensity(0, 0, 255) };
-            var secondSphere = new Sphere(new Vector3(1, 0, 1), 0.5) { Color = new LightIntensity(255, 0, 0) };
-
-            var xsize = 1024;
-            var ysize = 1024;
+            // PhongMaterialBase Mat = new PhongMaterial(new LightIntensity(1, 1, 255), 0.5, 0.4, 2.5, 50);
+            PhongMaterialBase Mat = new PhongMaterial(
+                new LightIntensity(1, 1, 255), 
+                new LightIntensity(0.1),
+                new LightIntensity(0.2, 0.2, 0.7), 
+                new LightIntensity(2.5), 
+                50);
 
             var scene = new Scene { BackgroundColor = new LightIntensity(0, 1, 0) };
-            //scene.Shapes.Add(sphere);
-            //scene.Shapes.Add(secondSphere);
-
-            var obj = ObjFile.Load(@"C:\png\box.obj");
-            var rng = new Random();
-            foreach (var triangle in obj.GetTriangles())
+            scene.Shapes.Add(new Sphere(new Vector3(0, 0, 0), 2));
+            scene.Shapes[0].Material = Mat;
+            scene.Lights.Add(new PointLight(new Vector3(10, 10, 10), Color.White));
+            
+            for (int i = 0, max = 1; i < max; i++)
             {
-                triangle.Color = new LightIntensity(rng.NextDouble(), rng.NextDouble(), rng.NextDouble());
-                scene.Shapes.Add(triangle);
-            }
-
-
-            for (var i = 0; i < 1; i++)
-            {
-                Console.WriteLine($"Creating image {i + 1}...");
-
-                var x = i switch
-                {
-                    1 => 20,
-                    3 => -20,
-                    _ => 0,
-                };
-                var z = i switch
-                {
-                    0 => -20,
-                    2 => 20,
-                    _ => 0,
-                };
-
-                //Camera camera = new Orthogonal(new Vector3(0, 0, 0), 0, new Vector2(5, 5));
-                PerspectiveCamera perspectiveCam = new(new Vector3(x, 50, z), new Vector3(0, 0, 0), new Vector3(0, -1, 0), 2);
+                Console.WriteLine($"Creating image {i + 1} out of {max}...");
+                PerspectiveCamera perspectiveCam = new(new Vector3(0, 0, 10), Vector3.Zero, new Vector3(0, -1, 0), 2);
 
                 Bitmap perspective = perspectiveCam.Raytrace(scene, new Size(1024, 1024));
-                //Bitmap orthogonal = tracer.Raytrace(scene, camera, new Size(1024, 1024));
 
                 Save(perspective, $"{nameof(perspective)}_{i}");
-                //Save(orthogonal, $"{nameof(orthogonal)}_{i}");
             }
+            
+            Console.WriteLine();
+            Console.WriteLine("Operation finished.");
         }
 
         public static void Save(Bitmap bitmap, string name)
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                Console.WriteLine($"Due to reliance on {nameof(System.Drawing)}, this app requires a Windows machine.");
+                return;
+            }
+
             if (bitmap == null)
                 return;
 

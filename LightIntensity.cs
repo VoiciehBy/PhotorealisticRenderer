@@ -3,17 +3,10 @@ using System.Drawing;
 
 namespace PhotorealisticRenderer
 {
-    public class LightIntensity
+    public readonly record struct LightIntensity(double R, double G, double B)
     {
-        public double R { get; set; }
-        public double G { get; set; }
-        public double B { get; set; }
-        public LightIntensity(double R, double G, double B)
-        {
-            this.R = R;
-            this.G = G;
-            this.B = B;
-        }
+        public LightIntensity(double color) : this(color, color, color)
+        { }
 
         public double MaxDiffBetween(LightIntensity other)
         {
@@ -24,24 +17,19 @@ namespace PhotorealisticRenderer
             return Math.Max(diffR, Math.Max(diffG, diffB));
         }
         
-        
-        public static implicit operator LightIntensity(Color color)
-        { return new LightIntensity(color.R / 255.0, color.G / 255.0, color.B / 255.0); }
-        public static implicit operator Color(LightIntensity intensity)
-        { return Color.FromArgb((int)(intensity.R * 255), (int)(intensity.G * 255), (int)(intensity.B * 255)); }
-        public static LightIntensity operator +(LightIntensity intensity, LightIntensity col2)
-        { return new LightIntensity(intensity.R + col2.R, intensity.G + col2.G, intensity.B + col2.B); }
-        public static LightIntensity operator +(LightIntensity intensity, double val)
-        { return new LightIntensity(intensity.R + val, intensity.G + val, intensity.B + val); }
-        public static LightIntensity operator -(LightIntensity intensity, double val)
-        { return new LightIntensity(intensity.R - val, intensity.G - val, intensity.B - val); }
-        public static LightIntensity operator *(LightIntensity intensity, double val)
-        { return new LightIntensity(intensity.R * val, intensity.G * val, intensity.B * val); }
-        public static LightIntensity operator *(LightIntensity intensity, LightIntensity intensity2)
-        { return new LightIntensity(intensity.R * intensity2.R, intensity.G * intensity2.G, intensity.B * intensity2.B); }
-        public static LightIntensity operator /(LightIntensity intensity, double val)
-        { return intensity * (1 / val); }
+        public static implicit operator LightIntensity(Color color) => new(color.R / 255.0, color.G / 255.0, color.B / 255.0);
+        public static implicit operator Color(LightIntensity intensity) => Color.FromArgb((int)Math.Min(Math.Max(intensity.R * 255, 0), 255), (int)Math.Min(Math.Max(intensity.G * 255, 0), 255), (int)Math.Min(Math.Max(intensity.B * 255, 0), 255));
+        public static LightIntensity operator +(LightIntensity intensity, LightIntensity col2) => new(intensity.R + col2.R, intensity.G + col2.G, intensity.B + col2.B);
+        public static LightIntensity operator +(LightIntensity intensity, double val) => new(intensity.R + val, intensity.G + val, intensity.B + val);
+        public static LightIntensity operator -(LightIntensity intensity, LightIntensity col2) => new(intensity.R - col2.R, intensity.G - col2.G, intensity.B - col2.B);
+        public static LightIntensity operator -(LightIntensity intensity, double val) => new(intensity.R - val, intensity.G - val, intensity.B - val);
+        public static LightIntensity operator *(LightIntensity intensity, double val) => new(intensity.R * val, intensity.G * val, intensity.B * val);
+        public static LightIntensity operator *(LightIntensity intensity, LightIntensity intensity2) => new(intensity.R * intensity2.R, intensity.G * intensity2.G, intensity.B * intensity2.B);
+        public static LightIntensity operator /(LightIntensity intensity, double val) => intensity * (1 / val);
+
         public static readonly LightIntensity White = new(1, 1, 1);
         public static readonly LightIntensity Black = new(0, 0, 0);
+
+        public override string ToString() => $"R: {R:F2}, G: {G:F2}, B: {B:F2}";
     }
 }
